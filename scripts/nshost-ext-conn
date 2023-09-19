@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Must be run as root"
+    exit
+fi
+
+HOST_NAME_1=$1
+
+if [ -z "$HOST_NAME_1" ]; then
+    echo "Host name 1 must be set"
+    exit 1
+fi
+
+if [ ${#HOST_NAME1} -gt 4 ]; then
+    echo "Host name 1 length must be less than 5"
+    exit 1
+fi
+
+IFACE1_PREFIX="ext-${HOST_NAME_1}"
+IFACE1_NUM=$(ip addr | grep ${IFACE1_PREFIX} | wc -l)
+
+IFACE2_PREFIX="${HOST_NAME_1}-ext"
+IFACE2_NUM=$(ip -n ${HOST_NAME_1} addr | grep ${IFACE2_PREFIX} | wc -l)
+
+IFACE1="${IFACE1_PREFIX}-${IFACE1_NUM}"
+IFACE2="${IFACE2_PREFIX}-${IFACE2_NUM}"
+ip link add ${IFACE1} type veth peer name ${IFACE2}
+
+ip link set ${IFACE2} netns ${HOST_NAME_1}
+
+ip link set ${IFACE1} up
+ip -n ${HOST_NAME_1} link set ${IFACE2} up

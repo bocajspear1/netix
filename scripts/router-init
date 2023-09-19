@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ROUTER_NAME=$1
+
+if [ -z "$ROUTER_NAME" ]; then
+    echo "Router name must be set"
+    exit 1
+fi
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Must be run as root"
+    exit
+fi
+
+mkdir -p /etc/frr/${ROUTER_NAME}
+cp /etc/frr/daemons /etc/frr/${ROUTER_NAME}/daemons
+sed -i "s/ripd=no/ripd=yes/" /etc/frr/${ROUTER_NAME}/daemons
+sed -i "s/bgpd=no/bgpd=yes/" /etc/frr/${ROUTER_NAME}/daemons
+sed -i "s/ospfd=no/ospfd=yes/" /etc/frr/${ROUTER_NAME}/daemons
+sed -i "s/eigrpd=no/eigrpd=yes/" /etc/frr/${ROUTER_NAME}/daemons
+sed -i "s/pimd=no/pimd=yes/" /etc/frr/${ROUTER_NAME}/daemons
+
+touch /etc/frr/${ROUTER_NAME}/ripd.conf
+touch /etc/frr/${ROUTER_NAME}/bgpd.conf
+touch /etc/frr/${ROUTER_NAME}/ospfd.conf
+touch /etc/frr/${ROUTER_NAME}/eigrpd.conf
+touch /etc/frr/${ROUTER_NAME}/pimd.conf
+touch /etc/frr/${ROUTER_NAME}/zebra.conf
+
+echo "hostname ${ROUTER_NAME}" > /etc/frr/${ROUTER_NAME}/frr.conf
+echo "hostname ${ROUTER_NAME}" > /etc/frr/${ROUTER_NAME}/vtysh.conf
+
+chown frr:frr /etc/frr/${ROUTER_NAME}/*.conf
+chmod 640 /etc/frr/${ROUTER_NAME}/*.conf

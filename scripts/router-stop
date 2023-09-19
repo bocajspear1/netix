@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ROUTER_NAME=$1
+
+if [ -z "$ROUTER_NAME" ]; then
+    echo "Router name must be set"
+    exit 1
+fi
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Must be run as root"
+    exit
+fi
+
+/usr/lib/frr/frrinit.sh stop $ROUTER_NAME

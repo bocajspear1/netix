@@ -1,0 +1,20 @@
+#!/bin/bash
+
+HOST_NAME=$1
+
+if [ -z "$HOST_NAME" ]; then
+    echo "Host name must be set"
+    exit 1
+fi
+
+if [ ${#HOST_NAME} -gt 4 ]; then
+    echo "Host name length must be less than 5"
+    exit 1
+fi
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Must be run as root"
+    exit
+fi
+
+ip netns add $HOST_NAME
