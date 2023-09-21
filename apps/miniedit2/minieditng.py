@@ -28,7 +28,7 @@ from mininet.log import info, debug, warn, setLogLevel
 from mininet.net import Mininet, VERSION
 from mininet.util import (netParse, ipAdd, quietRun,
                           buildTopo, custom, customClass )
-from mininet.term import makeTerm, cleanUpScreens
+from mininet.term import makeTerm, cleanUpScreens, runX11
 from mininet.node import (Controller, RemoteController, NOX, OVSController,
                           CPULimitedHost, Host, Node,
                           OVSSwitch, UserSwitch, IVSSwitch )
@@ -77,7 +77,7 @@ MINIEDIT_VERSION = '1.0.0'
 if 'PYTHONPATH' in os.environ:
     sys.path = os.environ[ 'PYTHONPATH' ].split( ':' ) + sys.path
 
-info( 'MiniEdit2 running against Mininet '+VERSION, '\n' )
+info( 'MiniEditNG running against Mininet '+VERSION, '\n' )
 MININET_VERSION = re.sub(r'[^\d\.]', '', VERSION)
 
 TOPODEF = 'none'
@@ -1123,7 +1123,7 @@ class MiniEdit( Frame ):
 
         Frame.__init__( self, parent )
         self.action = None
-        self.appName = 'MiniEdit2'
+        self.appName = 'MiniEditNG'
         self.fixedFont = tkFont.Font ( family="DejaVu Sans Mono", size="14" )
 
         # Style
@@ -1149,7 +1149,7 @@ class MiniEdit( Frame ):
         self.images = miniEditImages()
         self.buttons = {}
         self.active = None
-        self.tools = ( 'Select', 'Host', 'SDNSwitch', 'LegacySwitch', 'LegacyRouter', 'NetLink', 'Controller' )
+        self.tools = ( 'Select', 'Host', 'LegacySwitch', 'LegacyRouter', 'NetLink', 'SDNSwitch', 'Controller' )
         self.customColors = { 'SDNSwitch': 'darkGreen', 'Host': 'blue' }
         self.toolbar = self.createToolbar()
 
@@ -1187,12 +1187,14 @@ class MiniEdit( Frame ):
         
         self.hostRunPopup = Menu(self.top, tearoff=0)
         self.hostRunPopup.add_command(label='Terminal', font=self.font, command=self.xterm )
+        self.hostRunPopup.add_command(label='Wireshark', font=self.font, command=self.wireshark )
 
         self.legacyRouterPopup = Menu(self.top, tearoff=0)
         self.legacyRouterPopup.add_command(label='Delete', font=self.font, command=self.deleteSelection )
 
         self.legacyRouterRunPopup = Menu(self.top, tearoff=0)
         self.legacyRouterRunPopup.add_command(label='Terminal', font=self.font, command=self.xterm )
+        self.legacyRouterRunPopup.add_command(label='Wireshark', font=self.font, command=self.wireshark )
 
         self.switchPopup = Menu(self.top, tearoff=0)
         self.switchPopup.add_command(label='Properties', font=self.font, command=self.switchDetails )
@@ -1277,12 +1279,11 @@ class MiniEdit( Frame ):
         topologyMenu.add_command( label="Stop", font=font, command=self.doStop )
         fileMenu.add_separator()
         topologyMenu.add_command( label='Show OVS Summary', font=font, command=self.ovsShow )
-        topologyMenu.add_command( label='Root Terminal', font=font, command=self.rootTerminal )
 
         # Application menu
         appMenu = Menu( mbar, tearoff=False )
         mbar.add_cascade( label="Help", font=font, menu=appMenu )
-        appMenu.add_command( label='About MiniEdit2', command=self.about,
+        appMenu.add_command( label='About MiniEditNG', command=self.about,
                              font=font)
     # Canvas
 
@@ -1382,7 +1383,7 @@ class MiniEdit( Frame ):
         # Commands
         for cmd, color in [ ( 'Stop', 'darkRed' ), ( 'Run', 'darkGreen' ) ]:
             doCmd = getattr( self, 'do' + cmd )
-            b = Button( toolbar, text=cmd, font=self.smallFont,
+            b = Button( toolbar, text=cmd, font=self.font,
                         fg=color, command=doCmd )
             b.pack( fill='x', side='bottom' )
 
@@ -1974,13 +1975,24 @@ class MiniEdit( Frame ):
             "Select item on mouse entry."
             self.selectItem( link )
 
-        def highlight( _event, link=self.link ):
+        def highlight( event, link=self.link ):
             "Highlight item on mouse entry."
             self.selectItem( link )
+            if 'name' in self.links[link]: 
+                x, y = self.canvasx( event.x_root ), self.canvasy( event.y_root )
+                self.links[link]['linklabel'] = self.canvas.create_text(x, y-10,
+                        fill="red",
+                        font="Helvetica 10 bold",
+                        text=self.links[link]['name'])
+
+
             self.canvas.itemconfig( link, fill='green' )
 
         def unhighlight( _event, link=self.link ):
             "Unhighlight item on mouse exit."
+            if 'linklabel' in self.links[link]:
+                self.canvas.delete(self.links[link]['linklabel'])
+                del self.links[link]['linklabel']
             self.canvas.itemconfig( link, fill='blue' )
             #self.selectItem( None )
 
@@ -2075,11 +2087,10 @@ class MiniEdit( Frame ):
             about = Toplevel( bg='white' )
             about.title( 'About' )
             desc = self.appName + ': a simple network editor for MiniNet'
-            version = 'MiniEdit2 '+ MINIEDIT_VERSION
-            author = 'Original MiniEdit by: Bob Lantz <rlantz@cs>, April 2010'
+            version = 'MiniEditNG '+ MINIEDIT_VERSION
+            author = 'Original MiniEdit by: Bob Lantz <rlantz@cs>, April 2010; Gregory Gee 2013-2023'
             enhancements = 'Enhancements by:'
-            www = 'Gregory Gee 2013-2023: http://gregorygee.wordpress.com/category/miniedit/'
-            www2 = 'Jacob Hartman 2023+: https://j2h2.com'
+            www = 'Jacob Hartman 2023+: https://j2h2.com'
             line1 = Label( about, text=desc, font='Helvetica 10 bold', bg=bg )
             line2 = Label( about, text=version, font='Helvetica 9', bg=bg )
             line3 = Label( about, text=author, font='Helvetica 9', bg=bg )
@@ -2087,15 +2098,11 @@ class MiniEdit( Frame ):
             line5 = Entry( about, font='Helvetica 9', bg=bg, width=len(www), justify=CENTER )
             line5.insert(0, www)
             line5.configure(state='readonly')
-            line6 = Entry( about, font='Helvetica 9', bg=bg, width=len(www2), justify=CENTER )
-            line6.insert(0, www2)
-            line6.configure(state='readonly')
             line1.pack( padx=20, pady=10 )
             line2.pack(pady=10 )
             line3.pack(pady=10 )
             line4.pack(pady=10 )
             line5.pack(pady=3 )
-            line6.pack(pady=3 )
             hide = ( lambda about=about: about.withdraw() )
             self.aboutBox = about
             # Hide on close rather than destroying window
@@ -2297,10 +2304,6 @@ class MiniEdit( Frame ):
     @staticmethod
     def ovsShow( _ignore=None ):
         call(["xterm -T 'OVS Summary' -sb -sl 2000 -e 'ovs-vsctl show; read -p \"Press Enter to close\"' &"], shell=True)
-
-    @staticmethod
-    def rootTerminal( _ignore=None ):
-        call(["xterm -T 'Root Terminal' -sb -sl 2000 &"], shell=True)
 
     # Model interface
     #
@@ -2553,12 +2556,16 @@ class MiniEdit( Frame ):
                 linkopts=link['linkOpts']
                 srcName, dstName = src[ 'text' ], dst[ 'text' ]
                 srcNode, dstNode = net.nameToNode[ srcName ], net.nameToNode[ dstName ]
+
+                new_link = None
                 if linkopts:
-                    net.addLink(srcNode, dstNode, cls=TCLink, **linkopts)
+                    new_link = net.addLink(srcNode, dstNode, cls=TCLink, **linkopts)
                 else:
                     # debug( str(srcNode) )
                     # debug( str(dstNode), '\n' )
-                    net.addLink(srcNode, dstNode)
+                    new_link = net.addLink(srcNode, dstNode)
+                
+                self.links[key]['name'] = f"{new_link.intf1} <-> {new_link.intf2}"
                 self.canvas.itemconfig(key, dash=())
 
 
@@ -2701,6 +2708,7 @@ class MiniEdit( Frame ):
                 if 'LegacySwitch' in tags:
                     self.net.get(name).start( [] )
                     info( name + ' ')
+                print(name)
             info('\n')
 
             self.postStartSetup()
@@ -2724,6 +2732,11 @@ class MiniEdit( Frame ):
                     # Run User Defined Stop Command
                     if 'stopCommand' in opts:
                         newNode.cmdPrint(opts['stopCommand'])
+
+            # Remove link names
+            for key,link in self.links.items():
+                if 'name' in self.links[key]:
+                    del self.links[key]['name']
 
             self.net.stop()
         cleanUpScreens()
@@ -2784,6 +2797,16 @@ class MiniEdit( Frame ):
             self.net.terms += term
         else:
             self.net.terms.append(term)
+
+    def wireshark(self, _ignore=None):
+        if ( self.selection is None or
+             self.net is None or
+             self.selection not in self.itemToWidget ):
+            return
+        name = self.itemToWidget[ self.selection ][ 'text' ]
+        if name not in self.net.nameToNode:
+            return
+        runX11(self.net.nameToNode[ name ], 'wireshark')
 
     def iperf( self, _ignore=None ):
         "Make an xterm when a button is pressed."

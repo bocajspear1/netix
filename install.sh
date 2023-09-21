@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 apt-get update
-apt-get install -y virtualbox-guest-additions open-vm-tools-desktop python3-pip python-venv mininet python3-tk wireshark tcpdump wget curl mousepad
+apt-get install -y virtualbox-guest-additions open-vm-tools-desktop python3-pip python-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute
 
 echo "Install FRR..."
 # add GPG key
@@ -39,12 +39,18 @@ chmod +x ./scripts/*
 cp ./scripts/* /usr/local/bin/
 
 echo "Installing custom apps..."
-cp -r ./apps/miniedit2 /opt/miniedit2
+cp -r ./apps/minieditng /opt/minieditng
 
 echo "Installing custom .desktop files..."
 cp ./desktop/* /usr/share/applications/
 
 # https://askubuntu.com/questions/944685/pasting-external-text-into-xterm-or-uxterm
 echo "Install xterm copy-paste fixes..."
-cp ./configs/Xresources /home/*/.Xresources
+for homedir in /home/*; do cp ./configs/Xresources "${homedir}/.Xresources"; done
+
 cp ./configs/Xresources /root/.Xresources
+
+echo "Install topologies"
+mkdir -p /opt/topologies
+cp ./examples/* /opt/topologies
+chmod 444 /opt/topologies/*
