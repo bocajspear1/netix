@@ -6,7 +6,11 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 apt-get update
+<<<<<<< HEAD
 apt-get install -y virtualbox-guest-additions open-vm-tools-desktop python3-pip python-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute add-apt-repository
+=======
+apt-get install -y virtualbox-guest-utils open-vm-tools-desktop python3-pip python3-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute
+>>>>>>> c798fbd0a49115f4ba19ad77afc8ac7f27cc61bb
 
 echo "Install FRR..."
 # add GPG key
