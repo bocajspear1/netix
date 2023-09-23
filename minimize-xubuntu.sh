@@ -6,10 +6,10 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "Removing extra packages..."
-apt-get remove libreoffice-core libreoffice-common thunderbird synaptic
+apt-get remove -y libreoffice-core libreoffice-common thunderbird synaptic
 
-apt-get autoclean
 apt-get autoremove
+apt-get autoclean
 apt-get clean
 rm /var/cache/apt/*.bin
 
