@@ -13,7 +13,7 @@ COLOR_RESET="\e[0m"
 
 apt-get update
 echo "${COLOR_BLUE}Installing packages...${COLOR_RESET}"
-apt-get install -y virtualbox-guest-utils open-vm-tools-desktop python3-pip python2-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute software-properties-common gnupg apt-transport-https lsb-release
+apt-get install -y virtualbox-guest-utils open-vm-tools-desktop python3-pip python3-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute software-properties-common gnupg apt-transport-https lsb-release
 
 echo "${COLOR_BLUE}Installing FRR...${COLOR_RESET}"
 # add GPG key
