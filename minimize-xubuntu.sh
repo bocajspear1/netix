@@ -24,4 +24,15 @@ snap remove --purge bare
 snap remove --purge snapd
 
 swapoff
-truncate /swapfile
+truncate -s 0 /swapfile
+
+echo '
+SWAPSIZE=$(stat -c%s /swapfile)
+
+if [ $SWAPSIZE -eq 0 ]; then
+    swapoff -a
+    dd if=/dev/zero of=/swapfile bs=1MiB count=$((4*1024))
+    swapon /swapfile
+fi
+' | tee /etc/rc.local
+chmod +x /etc/rc.local
