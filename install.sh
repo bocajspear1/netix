@@ -13,7 +13,7 @@ COLOR_RESET="\e[0m"
 
 apt-get update
 echo "${COLOR_BLUE}Installing packages...${COLOR_RESET}"
-apt-get install -y virtualbox-guest-additions open-vm-tools-desktop python3-pip python-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute add-apt-repository
+apt-get install -y virtualbox-guest-utils open-vm-tools-desktop python3-pip python2-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute software-properties-common gnupg apt-transport-https lsb-release
 
 echo "${COLOR_BLUE}Installing FRR...${COLOR_RESET}"
 # add GPG key
@@ -29,7 +29,6 @@ echo deb '[signed-by=/usr/share/keyrings/frrouting.gpg]' https://deb.frrouting.o
 apt update && apt install -y frr frr-pythontools
 
 echo "${COLOR_BLUE}Installing Faucet...${COLOR_RESET}"
-apt-get install -y curl gnupg apt-transport-https lsb-release
 mkdir -p /etc/apt/keyrings/
 curl -1sLf https://packagecloud.io/faucetsdn/faucet/gpgkey | gpg --dearmor -o /etc/apt/keyrings/faucet.gpg
 echo "deb [signed-by=/etc/apt/keyrings/faucet.gpg] https://packagecloud.io/faucetsdn/faucet/$(lsb_release -si | awk '{print tolower($0)}')/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/faucet.list
