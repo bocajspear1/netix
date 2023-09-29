@@ -1,4 +1,4 @@
-# Tools
+# Installed Tools
 
 Nettux comes with a number of existing tools, with a few custom scripts and tools.
 
@@ -19,3 +19,5 @@ These standard tools are installed:
 - `socat`
 
 ## Custom Tools
+
+- [MiniEditNG](MiniEditNG.md) - A rework of the original MiniEdit in the Mininet project.

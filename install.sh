@@ -16,7 +16,7 @@ echo -e "${COLOR_BLUE}Installing packages...${COLOR_RESET}"
 
 echo "wireshark-common wireshark-common/install-setuid boolean true" | debconf-set-selections
 
-DEBIAN_FRONTEND=noninteractive apt-get install -y virtualbox-guest-utils open-vm-tools-desktop python3-pip python3-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute software-properties-common gnupg apt-transport-https lsb-release
+DEBIAN_FRONTEND=noninteractive apt-get install -y virtualbox-guest-utils virtualbox-guest-x11 open-vm-tools-desktop python3-pip python3-venv mininet python3-tk wireshark tcpdump wget curl mousepad netcat-openbsd socat inetutils-traceroute software-properties-common gnupg apt-transport-https lsb-release
 
 echo -e "${COLOR_BLUE}Installing FRR...${COLOR_RESET}"
 # add GPG key
