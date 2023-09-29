@@ -101,73 +101,77 @@ iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Experimenting with Blocking and Accepting
 
-First, on `right`, set the default to block:
+!!! note
+
+    Remember that rules are added and calculated in the order they are added.
+
+First, on `r`, set the default to block:
 
 ``` bash
-(right)$ iptables -P INPUT DROP
+(r) root@nettux:/home/nettux# iptables -P INPUT DROP
 ```
 
 Then allow TCP port 80 (this port is normally used for web servers using HTTP):
 
 ``` bash
-(right)$ iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+(r) root@nettux:/home/nettux# iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 ```
 
 Then, use netcat to create a listener on port 80. Leave this running:
 
 ``` bash
-(right)$ nc -lvp 80
+(r) root@nettux:/home/nettux# nc -lvp 80
 nc: getnameinfo: Temporary failure in name resolution
 ...
 ```
 
 Ignore the "Temporary failure in name resolution" error.
 
-On `left`, note that we cannot ping `right` anymore, since we are default denying all inbound packets to `right`:
+On `l`, note that we cannot ping `r` anymore, since we are default denying all inbound packets to `r`:
 
 ``` bash
-(left)$ ping 172.17.40.2
+(l) root@nettux:/home/nettux# ping 172.17.40.2
 PING 172.17.40.2 (172.17.40.2) 56(84) bytes of data.
 ^C
 --- 172.17.40.2 ping statistics ---
 2 packets transmitted, 0 received, 100% packet loss, time 1030ms
 ```
 
-However, if we use netcat, we can connect to port 80 on `right` since we opened that port up:
+However, if we use netcat, we can connect to port 80 on `r` since we opened that port up:
 
 ``` bash
-(left)$ nc -v 172.17.40.2 80
+(l) root@nettux:/home/nettux# nc -v 172.17.40.2 80
 Connection to 172.17.40.2 80 port [tcp/http] succeeded!
 ```
 
-Anything you type in the prompt now will be sent to `right`, which will print it out to the terminal.
+Anything you type in the prompt now will be sent to `r`, which will print it out to the terminal.
 
-Let's say that we want to block `left` from access port 80 now (they were send mean messages perhaps...). We want to insert a rule in the beginning so its processed first. First stop the netcat listener with ctrl-c, then run:
+Let's say that we want to block `l` from access port 80 now (they were send mean messages perhaps...). We want to insert a rule in the beginning so its processed first. First stop the netcat listener with ctrl-c, then run:
 
 ``` bash
-(right)$ iptables -I INPUT 1 -s 192.168.70.2 -p tcp --dport 80 -j DROP
+(r) root@nettux:/home/nettux# iptables -I INPUT 1 -s 192.168.70.2 -p tcp --dport 80 -j DROP
 ```
 
-Restart the netcat listener, then try to connect from `left` again:
+Restart the netcat listener, then try to connect from `l` again:
 
 ``` bash
-(left)$ nc -v 172.17.40.2 80
+(l) root@nettux:/home/nettux# nc -v 172.17.40.2 80
 ...
 ```
 
-Note it hangs, and have to use ctrl-c to stop it. However, if we try from `center`, it works:
+Note it hangs, and have to use ctrl-c to stop it. However, if we try from `c`, it works:
 
 ``` bash
-(center)$ nc -v 172.17.40.2 80
+(c) root@nettux:/home/nettux# nc -v 172.17.40.2 80
 Connection to 172.17.40.2 80 port [tcp/http] succeeded!
 ^C
 ```
 
-Start a listener on `center` and try to connect from `right`. Note we can't connect. Since we blocked all inbound traffic, and only allow if the destination port is 80, traffic returning to `right` is blocked. We need to use `iptables` stateful functionality to fix this:
+Start a listener on `c` and try to connect from `r`. Note we can't connect. Since we blocked all inbound traffic, and only allow if the destination port is 80, traffic returning to `r` is blocked. We need to use `iptables` stateful functionality to fix this:
 
 ``` bash
-(right)$ iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 
-(right)$ nc -v 172.17.40.1 80
+(r) root@nettux:/home/nettux# iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT 
+(r) root@nettux:/home/nettux# nc -v 172.17.40.1 80
 Connection to 172.17.40.1 80 port [tcp/http] succeeded!
 ```
 
@@ -183,45 +187,43 @@ iptables -t nat -A POSTROUTING -o <OUTBOUND_IFACE> -j MASQUERADE
 
 ## Masquerade in Action
 
-Let's try a third way of routing from `left` to `right`.
+Let's try a third way of routing from `l` to `r`.
 
 Remove the static route we made earlier:
 
 ``` bash
-(right)$ ip route del 192.168.70.0/24 via 172.17.40.1
-(right)$ 
+(r) root@nettux:/home/nettux# ip route del 192.168.70.0/24 via 172.17.40.1
 ```
 
 Run the listener again on `right`:
 
 ``` bash
-(right)$ nc -lvp 80
+(r) root@nettux:/home/nettux# nc -lvp 80
 nc: getnameinfo: Temporary failure in name resolution
 ...
 ```
 
-On `left`, not we cannot connect to `right`'s port 80 anymore:
+On `l`, not we cannot connect to `r`'s port 80 anymore:
 
 ``` bash
-(left)$ nc -v 172.17.40.2 80
+(l) root@nettux:/home/nettux# nc -v 172.17.40.2 80
 ...
 ```
 
-On `center` enable maquerading going out the interface to `right`:
+On `c` enable maquerading going out the interface to `r`:
 
 ``` bash
-(center)$ iptables -t nat -A POSTROUTING -o c0 -j MASQUERADE
-(center)$ 
+(c) root@nettux:/home/nettux# iptables -t nat -A POSTROUTING -o c-l-0 -j MASQUERADE
 ```
 
 Note we can connect again:
 
 ``` bash
-(left)$ nc -v 172.17.40.2 80
+(r) root@nettux:/home/nettux# nc -v 172.17.40.2 80
 Connection to 172.17.40.2 80 port [tcp/http] succeeded!
 ```
 
-If we use a tool like `tcpdump`, we can see the connect appears to come from `center` (`172.17.40.1`):
+If we use a tool like `tcpdump`, we can see the connect appears to come from `c` (`172.17.40.1`):
 
 ``` bash
 (right)$ tcpdump -n -i r0 tcp port 80
@@ -230,7 +232,7 @@ If we use a tool like `tcpdump`, we can see the connect appears to come from `ce
 14:03:38.893562 IP 172.17.40.2.80 > 172.17.40.1.44176: Flags [.], ack 1, win 510, options [nop,nop,TS val 525690667 ecr 461699208], length 0
 ```
 
-Since `right` knows how to get to `center`, it routes it back to `center` who then passes it back to `left` transparently.
+Since `r` knows how to get to `c`, it routes it back to `c` who then passes it back to `l` transparently.
 
 ## Advanced `iptables`
 

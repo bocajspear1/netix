@@ -1,6 +1,9 @@
 site_name: Nettux Docs
+theme:
+  name: material
 markdown_extensions:
   - admonition
-  - pymdownx.highlight:
-      anchor_linenums: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
   - pymdownx.superfences

@@ -6,7 +6,7 @@ The next step is get the basic connectivity, so at least new namespace can conne
 
 Firstly, we need to make sure our interface is actually up. The `nshost-conn` command should do this, but we should be certain. If we made configured interfaces not with `nshost-conn`, by default these interfaces are added in the DOWN state, meaning they are off. You can see this by running `ip addr` and the interface will say `state DOWN`. (Note: ignore the value after the `@`, the interface name is everything before the `@`)
 
-``` bash
+``` shell
 (c) root@nettux:/home/nettux# ip addr
 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -41,7 +41,7 @@ Check that all interfaces (`l-c-0`, `r-c-0`, `c-r-0`, `c-l-0`) are in the `UP` s
 
 We want to set up the network with these ranges:
 
-``` bash
+```
     192.168.70.0/24        172.17.40.0/24
 l <-----------------> c <-----------------> r
    .2            .1       .1            .2

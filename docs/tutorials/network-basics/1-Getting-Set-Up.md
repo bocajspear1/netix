@@ -1,3 +1,5 @@
+# 1. Getting Set Up
+
 > This is a slight rework of my tutorial here: [https://netbasics.j2h2.io/](https://netbasics.j2h2.io/)
 
 ## Assumptions

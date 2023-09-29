@@ -2,7 +2,7 @@
 
 "Routing" is how a computer determines where network traffic should go. Each system has a routing table, which determines where to send things. On Linux, you can view the routing table with `ip route`. Here's an example routing table from the `l` namespace:
 
-``` bash
+``` shell
 (l) root@nettux:/home/nettux# ip route
 192.168.70.0/24 dev l-c-0 proto kernel scope link src 192.168.70.2 
 ```
