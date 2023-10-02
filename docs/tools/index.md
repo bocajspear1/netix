@@ -21,3 +21,4 @@ These standard tools are installed:
 ## Custom Tools
 
 - [MiniEditNG](MiniEditNG.md) - A rework of the original MiniEdit in the Mininet project.
+- [Scripts](scripts.md) - Helpful scripts for network namespaces and virtual routers.
