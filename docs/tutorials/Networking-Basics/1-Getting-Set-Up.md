@@ -9,9 +9,9 @@
 
 ## Networking Mindset
 
-One of the biggest problems to solve in networking is the question "how do I get there?" Sometimes questions "how fast do I get there?" or "how do I get there securely?" are asked, but the essential issue is getting their in the first place. If you can't get there at all, no other questions matter.
+One of the biggest problems to solve in networking is the question "how do I get there?" Sometimes questions "how fast do I get there?" or "how do I get there securely?" are asked, but the essential issue is getting there in the first place. If you can't get there at all, no other questions matter.
 
-When setting up and configuring networks, always keep that in mind. By default, computers don't know how to get anywhere, and you need to tell them how to get from point A to point B, or tell them somebody else that knows how to get from point A to point B. When troubleshooting a networking issues, first ask if the computer you are on knows how to get to that destination or not. This mindset will be helpful in lab ahead and your day-to-day networking problems.
+When setting up and configuring networks, always keep that in mind. By default, computers don't know how to get anywhere. You need to tell them how to get from point A to point B or tell them that somebody else knows how to get from point A to point B. When troubleshooting a networking issues, first ask if the computer or router or device you are on knows how to get to that destination or not. This mindset will be helpful in lab ahead and your day-to-day networking problems.
 
 ## Some Configuration
 

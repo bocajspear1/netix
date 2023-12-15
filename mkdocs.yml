@@ -1,6 +1,8 @@
 site_name: Nettux Docs
 theme:
   name: material
+  palette:
+    primary: black
 markdown_extensions:
   - admonition
   - pymdownx.highlight
