@@ -1,4 +1,6 @@
 site_name: Nettux Docs
+site_description: Nettux is a Linux build to create a lightweight environment for Linux networking learning and experimentation.
+repo_url: https://github.com/bocajspear1/nettux
 theme:
   name: material
   palette:

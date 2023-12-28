@@ -1,6 +1,6 @@
 # MiniEditNG
 
-MiniEditNG rework of the original MiniEdit in the Mininet project. It has a few quality-of-life improvements to make it better to use.
+MiniEditNG is a rework of the original MiniEdit in the Mininet project. It has a few quality-of-life improvements to make it easier to use.
 
 You can find MiniEditNG by using the application menu `Internet > MiniEditNG` or running `sudo minieditng`.
 
@@ -12,7 +12,7 @@ Note that regardless of how you start MiniEditNG, you will need to run as root. 
 
 MiniEditNG provides a GUI interface to build topologies of virtual hosts, switches, and routers using the [Mininet project](https://mininet.org/). Using network namespaces and [Open vSwitch](https://www.openvswitch.org/), Mininet creates a simulated network that can run real applications and protocols.
 
-![](../images/minieditng-1.png)
+![](images/minieditng-1.png)
 
 ## Creating a Topology
 
@@ -32,7 +32,7 @@ To connect systems, select the "NetLink" on the left. Click the source system, t
 
     Hosts cannot be directly connected to other Hosts.
 
-![MiniEditNG with a topology](../images/minieditng-2.png)
+![MiniEditNG with a topology](images/minieditng-2.png)
 
 ## Start and Stopping the Simulation
 
@@ -40,7 +40,7 @@ To connect systems, select the "NetLink" on the left. Click the source system, t
 
 Pressing the "Run" button on the bottom left of the screen will build and start the systems in the topology. The background of the topology will turn grey to indicate this. While you can move objects around, you will not be able to add or remove any systems until the simulation is stopped.
 
-![MiniEditNG while simulation is active](../images/minieditng-3.png)
+![MiniEditNG while simulation is active](images/minieditng-3.png)
 
 ### Stop
 

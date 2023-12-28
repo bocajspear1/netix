@@ -11,7 +11,7 @@ These tutorials are for helping you use MiniEditNG.
 
 These tutorials are for getting you up to speed with networking basics and basic networking tasks.
 
-- [Networking Basics](network-basics/1-Getting-Set-Up.md)
+- [Networking Basics](Networking-Basics/1-Getting-Set-Up.md)
 - [Packet Capturing](packet-capturing.md)
 
 ## Routing Protocols

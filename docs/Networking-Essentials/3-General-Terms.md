@@ -1,0 +1,11 @@
+# 3. General Terms
+
+- **LAN**: LAN stands for "Local Area Network." These are local private networks usually controlled by one entity. They might range from a few systems to hundreds of systems. With modern virtual private networks (VPNs), they can even span across the world. These networks usually have the systems for users.
+- **WAN**: WAN stands for "Wide Area Network." Many times this simply references a location's connection to the internet, but can also refer to interconnectivity between different locations via the internet or a dedicated line or network. These networks normally don't have user devices.
+- **VPN**: VPN stands for "Virtual Private Network." This technology allows a system to appear to be on a remote network, using encryption and specific routing rules. It may only provide access to a remote LAN or it can be configured to pass all traffic through the remote LAN. If configured to pass all internet traffic through the LAN, it will appear as the remote LAN is making the connections out instead of the original host.
+!!! warning
+
+    Lots of claims are made these days about VPNs. They can offer some protect from tracking, as your network traffic will appear to some from the VPN provider's network instead of your own. They can also be useful when using encrypted public wireless networks. However, they cannot help with the following:
+
+    - Malware: Malware is dropped on your machine either by you downloading it or an exploit in your browser. A VPN simply encrypts traffic from point A to point B. It cannot protect you from malware getting on your system. You must be vigilant and use anti-virus software.
+    - Keep all your private data from hackers: Most data leakage is by a site being hacked and data being exposed or you being tricked into putting your private data into a malicious site. Most internet traffic these days is encrypted (sites use HTTPS) between you and the server. Even if you used a VPN to send private data to an unsecured site (using unencrypted HTTP), it would be exposed once it left the VPN provider's location.

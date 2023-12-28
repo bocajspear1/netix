@@ -19,7 +19,7 @@ When setting up and configuring networks, always keep that in mind. By default, 
     
     Nettux already does this, but I'll keep it here for reference
 
-We need to allow Linux to route traffic. This is done with:
+We need to allow Linux to route traffic, which is not on by default. This is done with:
 
 ``` bash
 $ sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'

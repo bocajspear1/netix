@@ -1,0 +1,8 @@
+# 2. Linux Terms
+
+When working with networking on Linux, there are a few terms you might some across.
+
+- **Network Namespaces**: Linux supports a feature known as Network Namespaces, which allows multiple networking stacks (sets of networking interfaces, routing tables, firewall rules, etc.) to exist on the same system. From a networking perspective, each network namespace is an entirely different system with different interfaces and addresses. This commonly used for technologies such as containers (e.g. Docker, LXC). Nettux uses them to allow quick network experimentation with them using the [ns-* scripts](../tools/scripts.md).  
+- **iptables**: `iptables` is a common command-line tool for setting up firewall and packet filtering rules in Linux. It can also set up things like address translation, traffic redirection and more. Nowadays, there are other tools used to set up the firewall on a Linux system, such `ufw` and `firewalld`. It is slowly being phased out in favor of the nftables suite.
+- **Virtual Ethernet**: A virtual ethernet interface is a virtual network adapter created by the kernel on the Linux. It doesn't have a real physical interface, but acts like one in most regards.
+- **Linux Bridge**: This is a basic virtual switch (the layer 2 device that moves traffic between systems on a single network) built into the Linux kernel. Most Nettux tutorials use the more full-featured [Open vSwitch](https://www.openvswitch.org/) switches, but you may see these mentioned elsewhere.
